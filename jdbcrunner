@@ -1,0 +1,159 @@
+1) TPCC-mysql操作
+   DB创建
+   mysql -u root
+   CREATE DATABASE tpcc;
+   远程测试场合
+   GRANT ALL PRIVILEGES ON tpcc.* TO tpcc@'%' IDENTIFIED BY 'tpcc';
+   本地测试场合
+   GRANT ALL PRIVILEGES ON tpcc.* TO tpcc@'localhost' IDENTIFIED BY 'tpcc';
+   目标磁盘
+   mount /dev/sdbX /var/lib/mysql
+   配置文件
+   cat /etc/my.cnf
+   [mysqld]
+      datadir=/var/lib/mysql
+      socket=/var/lib/mysql/mysql.sock
+      user=mysql
+      symbolic-links=0
+      #port=3307    ---  可选择添加
+   [mysqld_safe]
+      log-error=/var/log/mysqld.log
+      pid-file=/var/run/mysqld/mysqld.pid
+   --------
+    chgrp -R mysql /var/lib/mysql
+    chown -R mysql /var/lib/mysql
+    启动mysql：
+    /usr/bin/mysqld_safe &
+    或service mysqld restart
+   --------
+   export CLASSPATH=jdbcrunner-1.2.jar;
+   java JR scripts/tpcc_load_mysql.js;   ->  生成后，需要停止服务，备份数据库
+   java JR scripts/tpcc_mysql.js;   -> client端执行
+   注1：通过yum 卸载和安装mysql，可以解决/etc/init.d/mysqld问题
+   注2：多存储路径多port访问方式
+   /etc/my.cnf
+   [mysqld1]
+    datadir=/var/lib/mysql/DBASE_1/mysql
+    socket=/var/lib/mysql/mysql.sock1
+    user=mysql
+    port=3307
+
+   [mysqld2]
+     datadir=/var/lib/mysql/DBASE_2/mysql
+     socket=/var/lib/mysql/mysql.sock2
+     user=mysql
+     port=3308
+
+    service mysqld restart
+    mysqld_multi start 1
+    mysqld_multi start 2
+
+    注3：可选择调优参数
+    symbolic-links=0
+    innodb_buffer_pool_size=5120MB
+    innodb_flush_log_at_trx_commit=2
+    max_prepared_stmt_count=124000
+    max_connections=10000
+    skip-host-cache
+    skip-name-resolve
+    innodb_open_files=50000
+    open_files_limit=50000
+    back_log=5000
+    connect_timeout=50
+    table_cache=2048
+    key_buffer_size=100M
+    sort_buffer_size=10M
+    join_buffer_size=10M
+    read_buffer_size=100M
+    query_cache_size=100M
+    tmp_table_size=100M
+    myisam_sort_buffer_size=64M
+    thread_cache_size=200
+    thread_concurrency=24
+
+2）tpcc-psql操作
+    首先将2台机器之间ssh 互联无限制。
+    ssh-keygen -t rsa
+    scp /root/.ssh/id_rsa.pub $GUEST_IP:/root/.ssh/authorized_keys
+    磁盘
+    mount /dev/sdX1 /var/lib/pgsql/data
+    rm -rf /var/lib/pgsql/data/*
+    chgrp -R postgres /var/lib/pgsql
+    chown -R postgres /var/lib/pgsql
+    service postgresql initdb
+    
+    vim /var/lib/pgsql/data/pg_hba.conf
+    # TYPE  DATABASE    USER        CIDR-ADDRESS          METHOD
+    # "local" is for Unix domain socket connections only
+    local   all         all                               trust
+    # IPv4 local connections:
+    host    all         all         127.0.0.1/32          trust
+    host    all         all         192.168.1.x/32※对连机ip     trust
+    # IPv6 local connections:
+    host    all         all         ::1/128               trust
+    
+    vim /var/lib/pgsql/data/postgresql.conf
+    listen_addresses = '*'
+    port = 5432
+
+    # service postgresql restart
+    # su - postgres
+    createuser -P -s -e tpcc
+    createdb tpcc -O tpcc
+    psql  tpcc -U tpcc -W
+    
+    cd $jdbcrunner_dir
+    export CLASSPATH=jdbcrunner-1.2.jar
+    java JR scripts/tpcc_load_psql.js  ->  生成后，需要停止服务，备份数据库
+    java JR scripts/tpcc_psql.js;   -> client端执行
+    
+3) sysbench-mysql操作
+> mysql -u root
+GRANT ALL PRIVILEGES ON sbtest.* TO sbtest@'%' IDENTIFIED BY 'sbtest';
+GRANT ALL PRIVILEGES ON sbtest.* TO sbtest@'localhost' IDENTIFIED BY 'sbtest';
+
+use mysql;
+show tables;
+select user,host,password from user
+
+CREATE DATABASE sbtest;
+java JR scripts\sysbench_load_mysql.js
+java JR scripts\sysbench_load.js -param0 50000
+java -server JR scripts\sysbench.js -jdbcUrl jdbc:mysql://server/sbtest
+
+4) sysbench-psql操作
+
+# mount /dev/sde1 /var/lib/pgsql/data 
+# rm -rf /var/lib/pgsql/data/*
+# chgrp -R postgres /var/lib/pgsql
+# chown -R postgres /var/lib/pgsql
+# service postgresql initdb
+
+vim /var/lib/pgsql/data/pg_hba.conf
+# TYPE  DATABASE    USER        CIDR-ADDRESS          METHOD
+# "local" is for Unix domain socket connections only
+local   all         all                               trust
+# IPv4 local connections:
+host    all         all         127.0.0.1/32          trust
+host    all         all         192.168.1.2/32※1     trust
+# IPv6 local connections:
+host    all         all         ::1/128               trust
+
+vim /var/lib/pgsql/data/postgresql.conf
+listen_addresses = '*'
+port = 5432
+
+# service postgresql restart
+# su - postgres
+
+$createuser –P –s -e sbtest
+$createdb tpcc -O sbtest
+$psql  sbtest -U sbtest –W	
+
+cd $jdbcrunner_dir
+export CLASSPATH=jdbcrunner-1.2.jar
+java JR scripts/sysbench_load_psql.js
+java JR scripts/sysbench_psql.js
+
+java JR scripts\sysbench_load.js -param0 50000
+java -server JR scripts\sysbench.js -jdbcUrl jdbc:mysql://server/sbtest
