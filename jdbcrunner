@@ -1,4 +1,6 @@
 https://dbstudy.info/jdbcrunner/docs_ja/overview.html
+https://dbstudy.info/jdbcrunner/archive/jdbcrunner-1.3.zip
+https://dbstudy.info/jdbcrunner/archive/jdbcrunner-1.2.zip
 1) TPCC-mysql操作
    DB创建
    mysql -u root
