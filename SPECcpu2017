@@ -1,0 +1,31 @@
+1) ./install.sh -d /home/SPECcpu2017
+2) *_2017.cfg  (Intel binary)
+3) cd /home/SPCcpu2017
+   . ./shrc    # source  cshrc
+4) runcpu -c *_2017.cfg -C 64  intrate --output_format all
+
+5) . ./shrc
+   . ./numa-detection.sh
+   ulimit -s unlimited   
+   a=`cat /proc/cpuinfo | grep processor | wc -l`
+   rm -rf topo.txt
+   specperl nhmtopology.pl
+   b=`cat topo.txt`
+   c=`expr $a / 2`
+   rm -Rf $SPEC/benchspec/CPU/*/run/*
+   sync
+   config="xxx.cfg"
+
+   numactl --interleave=all runcpu --nobuild --action validate --define default-platform-flags --define numcopies=$a -c ${config} --define smt-on --define cores=$c  --define $b --define invoke_with_interleave --define drop_caches --tune base -o all --noreportable -n  1  intrate
+   sleep 60
+   rm -Rf $SPEC/benchspec/CPU/*/run/*
+   echo 1 > /proc/sys/vm/drop_caches
+
+   ptat start: 
+        modprobe msr
+        insmod /XXX/tools/ptat/XXX/driver/ptusys/ptusys.ko
+        /XXX/tools/ptat/XXX/ptat -i 5000000 -filter 0x3f -y -ts -csv -log -logdir . &
+   ptat stop:
+        killall -r ptat
+        mv *.csv  XXlog/
+         
