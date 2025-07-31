@@ -25,6 +25,7 @@
         modprobe msr
         insmod /XXX/tools/ptat/XXX/driver/ptusys/ptusys.ko
         /XXX/tools/ptat/XXX/ptat -i 5000000 -filter 0x3f -y -ts -csv -log -logdir . &
+        注: 0x3f = 0011 1111 表示只采集bit0~bit5的数据（CPU & Memory）
    ptat stop:
         killall -r ptat
         mv *.csv  XXlog/
