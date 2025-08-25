@@ -1,0 +1,15 @@
+1）perf event 确认
+perf list | grep  -i "instruction\|cycle"
+perf list | grep  -i "miss"
+
+2）信息采集
+perf stat -e XXX,YYY  ./your_app
+
+3) 结果分析
+
+-------------------------------------
+
+perf  record -g  ls
+perf  report -i  perf.data
+
+-------------------------------------
