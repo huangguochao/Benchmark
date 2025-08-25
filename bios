@@ -1,0 +1,36 @@
+Hardware Prefetcher    硬件预取选项。CPU会将下一条指令或数据从内存预取到CPU缓存中。
+				
+Adjacent Cache Line Prefetch  缓存数据周围预取选项。
+Enabled：CPU读取缓存数据时，同时会读取数据周围128字节数据。
+Disabled:CPU读取缓存数据时，同时会读取数据周围  64字节数据。
+
+DCU Streamer Prefetcher流数据缓存单元预读取选项
+DCU：data  cache  unit
+Enabled：CPU如果侦测到多次加载缓存L1同一行数据，CPU会同时预取要加载数据下一行数据。
+Disabled:CPU不会预取要读取数据的下一行数据。
+
+DCU IP Prefetcher 数据缓存单元IP预读取选项
+Enable：开启DCU IP预取功能。DCU IP预取功能可以从历史记录中判断是否有数据需要预读取(从L2或者内存读到L1)。
+
+HWPM Support     HWPM(HardWare controlled Power Management)  硬件控制电源管理(HWPM)设置选项
+Disabled：禁用HWPM。
+HWPM NATIVE MODE ：设置HWPM模式为NATIVE。
+HWPM OOB MODE：设置HWPM模式为OOB。
+
+Enhanced SpeedStep  CPU运行频率自动切换选项
+Enabled：启用CPU在空闲的时候或者电压不足的时候自动降到低频率。
+Disabled:关闭CPU在空闲的时候或者电压不足的时候运行频率不变。
+
+Turbo Mode自动超频选项
+Energy PerformanceCPU性能和节电平衡管理选项
+Performance：启用CPU以性能为主运行（忽略节电）
+Balanced Performance:在节点模式下偏向性能。
+Balanced Energy:在性能模式下偏向节电力。
+Energy Efficient:启用CPU以节电为主运行（忽略性能）
+
+Utilization Profile CPU参数化节电设置选项
+Even：不会根据PCIe或者QPI的带宽使用来调整CPU的运行频率。
+Unbalanced:会根据PCIe或者QPI的带宽使用来调整CPU的运行频率。
+
+CPU C1E Support  CPU运行频率自动切换选项  C1 Enhanced Halt Stat
+Enabled：启用CPU在空闲时候自动把频率降到XXGHZ。
