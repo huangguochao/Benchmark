@@ -1,0 +1,11 @@
+1) disable: 低频~turbo频之间动作
+2) enable: turbo freq上动作
+3）动作确认
+cd  /home/Benchmark/intelpcm-XXX/
+make
+./pcm-msr.x -w 0xXXYY  -c 0 0x620    => 让cpu0的uncore降下来
+               0xXX(最小hz数)YY（最大hz数） 0c表示1.2G  如-w 0x0c0c
+./pcm-msr.x -w 0xXXYY  -c 32 0x620    => 让cpu1的uncore降下来，假如core32是cpu1的core
+
+cd /home/Benchamrk/ptu/
+./ptumon -i 5000  周期性采集ptu信息观测，是否符合预期。
