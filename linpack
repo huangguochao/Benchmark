@@ -1,0 +1,12 @@
+1) tool download
+https://software.intel.com/en-us/articles/intel-mkl-benchmarks-suite
+
+2) 理论值
+Rpeak = CPU每个时钟周期执行浮点运算的次数  ×  CPU主频（各AVX下all core的最大频率）  ×系统中CPU核心数目
+
+Rpeak = 8(SIMD) * 2(FMA) * 2(pipe)    *   1.8(AVX512 max all GHz) * 20(core) * 4(socket)
+      = 4608Gflops
+8180 ：  32*                               2.30 *                     28 *     2  = 4121.6 
+
+3）参数设定
+N*N*8 = 内存总大小*0.8  
