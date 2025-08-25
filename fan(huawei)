@@ -1,0 +1,21 @@
+ssh    $ irmc-ip
+
+ iBMC:/->ipmcget -d faninfo
+ Current mode: auto
+ 
+ iBMC:/->ipmcset -d fanlevel -v 100
+ Set fan level successfully.
+ Current Mode:        Auto
+ Manual Fan Level:    100%
+ 
+ iBMC:/->ipmcget -d faninfo
+ Current mode: auto
+ 
+ iBMC:/->ipmcset -d fanmode -v 1 43200
+ Set fan mode successfully.
+ Current Mode:       manual
+ Time out    :       XXX00 seconds
+ 
+ iBMC:/->ipmcget -d faninfo
+ Current mode: manual,timeout XXXX seconds.
+ Manual fan level is 100.
