@@ -1,0 +1,30 @@
+probe kernel.function("sys_*").return {
+         printf ("%s <- %s\n", thread_indent(-1), probefunc())
+}
+
+global counter_1
+global begin_1
+global end_1
+global total_1
+
+probe kernel.function("tcp_ack@net/ipv4/tcp_XXX.c") {
+        if ( execname() == "lat_tcp" ) {
+                begin_1 = get_cycles();
+                counter_1++
+        }
+}
+probe kernel.function("tcp_ack@net/ipv4/tcp_XXX.c").return {
+        if ( execname() == "lat_tcp" ) {
+                end_1 = get_cycles()
+                total_1 = total_1 + end_1 - begin_1
+        }
+}
+probe timer.ms(5){
+       printf("total_1: %d\n",total_1);
+       printf("total_2: %d\n",total_2);
+       printf("total_3: %d\n",total_3);
+}
+probe end {
+        printf("The function tcp_ack: %d times.\n", counter_1)
+        printf("The function tcp_ack: %d cycles.\n", total_1)
+}
