@@ -29,4 +29,21 @@
    ptat stop:
         killall -r ptat
         mv *.csv  XXlog/
+---------------------------------------------------------------------------
+重新编译spccpu
+X) 一定要reportable,不能加noreportable
+1)安装编译器 iccXXXX install
+2)为了加快编译速度，尽可能用tmpfs
+   /home/Benchmark/specccpu-XXX  -> /home/memory/speccpu(tmpfs)
+   cd /home/memory/speccpu; ./install.sh
+   mkdir /home/memory/speccpu/iccXXlib/
+   cp -rp /opt/intel/compilers_and_libraries_XXX/linux/compiler/lib/ia32 /home/memory/speccpu/iccXXlib/
+   cp -rp /opt/intel/compilers_and_libraries_XXX/linux/compiler/lib/intel64 /home/memory/speccpu/iccXXlib/
+3) cfg文件制作
+4) rebuild.sh执行（必须要有Default-Platform-Flags.xml和intel-XXX-offical-XXX64-revX.xml）   
+   runspec --define invoke_with_interleave --define default-platform-flags -c cpu
+
+source /opt/intel(替换)/bin/compilervars.sh  intel64(替换)
+#source /opt/XXXX/bin/iccvars.sh intel64(替换)
+#source /opt/XXXX/bin/ifortvars.sh intel64(替换)
          
