@@ -1,0 +1,37 @@
+1)理论值计算
+内存时钟(MHz)* 8(bytes) * 内存通道数(channel) * Socket数 = XX MB/s
+如：
+2666Mhz 的内存： 2666 * 8 * 6 * 2 = 255936 MB/s
+ 
+2)调优参数
+ulimit -s unlimited
+cpupower -c all frequency-set -g performance
+echo XXXX > /proc/sys/kernel/sched_cfs_bandwidth_slice_us
+echo XXXX > /proc/sys/kernel/sched_latency_ns
+echo XXXX > /proc/sys/kernel/sched_migration_cost_ns
+echo XXXX > /proc/sys/kernel/sched_min_granularity_ns
+echo XXXX > /proc/sys/kernel/sched_wakeup_granularity_ns
+cpupower idle-set -d XXX
+echo XXXXX > /proc/sys/fs/aio-max-nr
+echo 0 > /proc/sys/kernel/soft_watchdog
+echo 0 > /proc/sys/kernel/numa_balancing
+echo 1 >  /proc/sys/vm/drop_caches
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
+3) size确定
+SIZE=-DSTREAM_ARRAY_SIZE=XXXXXX   (单位是B) 
+SIZE需要大于所有LX cache的 XX 倍数
+
+4）编译参数
+source /opt/intel/bin/compilervars.sh intel64
+#source /opt/intel/bin/ifortvars.sh intel64
+CPUs=$(lscpu | awk -F ':' '{ if($1=="CPU(s)") print $2}')
+Threads_per_core=$(lscpu | awk -F ':' '{ if($1=="Thread(s) per core") print $2}')
+export OMP_NUM_THREADS=$(($CPUs / $Threads_per_core))
+export KMP_AFFINITY=verbose,granularity=core,compact,1,0
+sed -i "s/^.*SIZE = -DSTREAM_ARRAY_SIZE=.*$/SIZE = -DSTREAM_ARRAY_SIZE=$size/g" Makefile
+make clean
+make
+
+5）Makefile
+CFLAGS = -O3？
