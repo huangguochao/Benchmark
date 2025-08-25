@@ -29,10 +29,18 @@
    ptat stop:
         killall -r ptat
         mv *.csv  XXlog/
+
+   numactl --interleave=all runcpu --define default-platform-flags --copies $d -c ${CONFIG} --define smt-on --define cores=$c --define $b --define invoke_with_interleave --define drop_caches
+ --use_submit_for_compare --tune base -o all ${BENCHMARK}
 ---------------------------------------------------------------------------
 重新编译spccpu
 X) 一定要reportable,不能加noreportable
-1)安装编译器 iccXXXX install
+Y）compile的flag注意，sysinfo_program = specperl $[top]/config/sysinfo.revXXXX
+不加-f时，default的notes_plat_sysinfo_000~350不要编辑
+Z) mkdir /shXX.XX
+   cp -a -p /home/memory/speccpu/shXX.XX/* /shXX.XX
+
+1)安装编译器 iccXXXX install （glibc-devel-static相关包可能也要装，32位64位最好都装下）
 2)为了加快编译速度，尽可能用tmpfs
    /home/Benchmark/specccpu-XXX  -> /home/memory/speccpu(tmpfs)
    cd /home/memory/speccpu; ./install.sh
@@ -41,7 +49,10 @@ X) 一定要reportable,不能加noreportable
    cp -rp /opt/intel/compilers_and_libraries_XXX/linux/compiler/lib/intel64 /home/memory/speccpu/iccXXlib/
 3) cfg文件制作
 4) rebuild.sh执行（必须要有Default-Platform-Flags.xml和intel-XXX-offical-XXX64-revX.xml）   
-   runspec --define invoke_with_interleave --define default-platform-flags -c cpu
+   runspec --define invoke_with_interleave --define default-platform-flags -c cpuxx.cfg --define smt -a build int
+5) cp -rp  /home/memory/speccpu /home/Benchmark/speccpu-build/
+6) speccpu-build.tar.gz打包
+7) *.gz -> 跳板机备份
 
 source /opt/intel(替换)/bin/compilervars.sh  intel64(替换)
 #source /opt/XXXX/bin/iccvars.sh intel64(替换)
