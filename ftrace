@@ -1,0 +1,24 @@
+安装debugfs
+1) 先mount debugfs。
+# mount -t debugfs none /sys/kernel/debug
+
+2) /sys/kernel/debug/tracing/ 目录下、有名为available_tracers的文件。
+这个文件包含了所有支持的tracer。
+
+# cat /sys/kernel/debug/tracing/available_tracers
+blk kmemtrace function_graph wakeup_rt wakeup function sysprof sched_switch initcall nop
+
+3) 选择一个tracer
+# echo sched_switch > /sys/kernel/debug/tracing/current_tracer
+
+4) trace on
+# echo 1 > /sys/kernel/debug/tracing/tracing_enabled
+
+5) 执行测试
+# run_your_app_or_cmd
+
+6) ftrace停止、数据采集也随时停止。
+# echo 0 > /sys/kernel/debug/tracing/tracing_enabled
+
+7) 采集log
+# cat /sys/kernel/debug/tracing/trace > /tmp/lat_trace_log
