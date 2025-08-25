@@ -1,0 +1,2 @@
+chcon -t postgresql_db_t /var/lib/pgsql/data/PG_VERSION  
+restorecon /var/lib/pgsql/data/PG_VERSION
