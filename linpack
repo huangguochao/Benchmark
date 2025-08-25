@@ -1,5 +1,5 @@
 1) tool download
-https://software.intel.com/en-us/articles/intel-mkl-benchmarks-suite
+https://www.intel.com/content/www/us/en/developer/articles/technical/onemkl-benchmarks-suite.html
 
 2) 理论值
 Rpeak = CPU每个时钟周期执行浮点运算的次数  ×  CPU主频（各AVX下all core的最大频率）  ×系统中CPU核心数目
