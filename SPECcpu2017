@@ -58,3 +58,26 @@ source /opt/intel(替换)/bin/compilervars.sh  intel64(替换)
 #source /opt/XXXX/bin/iccvars.sh intel64(替换)
 #source /opt/XXXX/bin/ifortvars.sh intel64(替换)
          
+---------------------------------------------------------------------
+ulimit -s  unlimited
+ulimit -l  XXXXXXXXX
+sysctl -w  vm.dirty_ratio=XXX
+sysctl -w  vm.swappiness=X
+sysctl -w  vm.zone_reclaim_mode=1?
+sync; sysctl -w vm.drop_caches=3
+sysctl -w  kernel.randomize_va_space=0
+echo  always  >  /sys/kernel/mm/transparent_hugepage/enabled
+echo  always  >  /sys/kernel/mm/transparent_hugepage/defrag
+--------------
+bios:
+L1 Stride Prefetcher = Disabled/Enabled?
+Determinism Slider = power?
+TDP Control = Manual?
+TDP limit = X00?
+Package Power Limit Control = Manual
+Package Power Limit = X00?
+Power Profile Selection = High Performance?
+NUMA nodes per socket = NPS2 ?
+Probe Filter Organization = Shared?
+Interleaving Region Size = XXK? Region Size
+FAN Control = Full/Auto?
