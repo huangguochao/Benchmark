@@ -81,3 +81,6 @@ NUMA nodes per socket = NPS2 ?
 Probe Filter Organization = Shared?
 Interleaving Region Size = XXK? Region Size
 FAN Control = Full/Auto?
+----------------------------------------------------------------
+ARM v8 投稿参考
+https://spec.org/cpu2017/results/res2021q3/cpu2017-20210702-27696.html
