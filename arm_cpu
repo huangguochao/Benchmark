@@ -11,9 +11,38 @@ NEON Data Engine：NEON数据引擎
 指令集调用（Intrinsics）
 编译器自动向量化
 预优化加速库（如ARM Compute Library）
-
+---------------------------------------------
 ACP：（Accelerator Coherency Port）加速器一致性端口
-
+定义：ACP是ARM架构中的一个可选从接口，作为AXI总线协议的一部分，专门设计用于在多核ARM架构下实现高速缓存一致性。
+功能：
+使非缓存一致性的主机能够实现缓存一致性。
+允许PL（可编程逻辑）中的加速器或自定义逻辑直接访问PS（处理系统）端的缓存系统（如L1和L2 Cache），实现低延迟的数据传输。
+PL（可编程逻辑）
+PS（处理系统）
+通过SCU（Snoop Control Unit）连接，为PL提供异步缓存一致性直接访问PS的入口。
+---------------------------------------------
 SCU：（Snoop Control Unit）侦听控制单元
+定义：SCU是ARM Cortex-A9处理器中的一个关键组件，负责维护L1和L2缓存一致性。
+功能：
+在Cortex-A9处理器之间维护数据Cache的一致性。
+初始化L2 AXI存储器访问。
+在请求L2访问的Cortex-A9处理器之间仲裁。
+管理ACP访问。
+---------------------------------------------
+AXI总线协议 AXI（Advanced eXtensible Interface）高级可扩展接口
+ARM公司提出的AMBA（Advanced Microcontroller Bus Architecture）协议家族中的高性能总线标准
+核心特性：
+‌1) 通道分离架构‌
+  包含5个独立通道：读地址(AR)、读数据(R)、写地址(AW)、写数据(W)、写响应(B)
+  读写操作可并行执行，提升吞吐量
 
+‌2) 突发传输机制‌
+   仅需传输起始地址，支持1-256拍（AXI4）的突发传输
+   突发类型包括：固定(FIXED)、递增(INCR)、换行(WRAP)
+
+‌3) 高级传输特性‌
+   支持非对齐数据访问（通过字节选通信号）
+   允许乱序完成（Out-of-Order）和多未完成事务（Outstanding）
+
+---------------------------------------------
 Dual 64bit AMBA@3 AXI：
