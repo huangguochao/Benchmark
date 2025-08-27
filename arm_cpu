@@ -106,5 +106,5 @@ DynamIQ是ARM设计的‌多核集群管理硬件架构‌，核心组件包括�
 ‌电源管理算法‌：动态电压频率调整（DVFS）需与DSU的PPU（电源策略单元）协同工作。
 ---------------------------------------------
 Linux EAS（能源感知调度）
-
+https://docs.kernel.org/translations/zh_CN/scheduler/sched-energy.html
 ---------------------------------------------
