@@ -1,0 +1,19 @@
+https://zhuanlan.zhihu.com/p/720273505
+
+NEON是ARM公司为Cortex-A系列处理器设计的128位SIMD(单指令多数据)扩展架构（ARMv7架构引入，ARMv8架构中默认集成）
+单指令并行处理多组数据
+支持整数、浮点及多项式运算
+广泛应用于视频编解码、图像处理及3D图形渲染等领域
+
+NEON Data Engine：NEON数据引擎
+‌实现方式‌：
+汇编级加速（最高性能）
+指令集调用（Intrinsics）
+编译器自动向量化
+预优化加速库（如ARM Compute Library）
+
+ACP：（Accelerator Coherency Port）加速器一致性端口
+
+SCU：（Snoop Control Unit）侦听控制单元
+
+Dual 64bit AMBA@3 AXI：
