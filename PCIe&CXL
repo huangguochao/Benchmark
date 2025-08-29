@@ -1,0 +1,19 @@
+PCIe等终端设备与CPU之间的桥接 -> CXL Switch
+PCI brige的作用是拓展PCI设备的个数
+
+‌1. CXL 1.1/2.0：两级拓扑
+CPU → CXL Switch → [GPU/Mem_Expander]
+                  → [FPGA/Accelerator]
+
+CXL 3.0：对等网络（Fabric）
+      CPU
+     /   \
+   CXL Switch
+   /    |    \
+GPU   内存池   FPGA
+  ↘    ↓    ↙
+  CXL 内存共享
+颠覆性创新：‌
+任意设备间直接内存共享（如GPU→FPGA零拷贝）
+分布式内存池（多设备共享超大内存池）
+支持开关级联（构建大规模异构系统）
