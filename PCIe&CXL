@@ -1,5 +1,6 @@
 PCIe等终端设备与CPU之间的桥接 -> CXL Switch
-PCI brige的作用是拓展PCI设备的个数
+PCIe比PCI更快的原因是PCIe通信是点对点，PCI是共享总线方式。
+PCIe brige的作用是拓展PCIe设备的个数
 
 ‌1. CXL 1.1/2.0：两级拓扑
 CPU → CXL Switch → [GPU/Mem_Expander]
