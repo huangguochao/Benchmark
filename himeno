@@ -14,3 +14,25 @@ You get executable load module. >mpirun -np 2 ./a.out
 $ cd /home/user/himenobench
 $ lha e cc_himenoBMTxp_m.lzh
 $ mv himenobmtxps.c himenoBMTxps.c
+
+-------------------------------------------
+OBJS = himenoBMTxps.o
+
+CC = mpicc
+RM = /bin/rm
+PROG = bmt
+
+CFLAGS = -O3
+LDFLAGS = ${CFLAGS}
+
+all : ${PROG}
+
+${PROG} : ${OBJS} param.h
+	${CC} -o $@ ${OBJS} ${LDFLAGS}
+
+.c.o : param.h
+	${CC} -c ${CFLAGS} $<
+
+clean :
+	${RM} -f ${PROG} ${OBJS} core
+-------------------------------------------
