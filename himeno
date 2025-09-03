@@ -1,2 +1,12 @@
 https://i.riken.jp/supercom/documents/himenobmt/download/
+https://i.riken.jp/wp-content/uploads/2015/07/cc_himenobmtxp_mpi.zip
 
+How to use:
+
+Download LZH file (cc_himenoBMTxp_mpi.lzh).
+Unzip it! You get four files: “himenoBMTxps.c”, “param.h”, “paramset.sh” and “Makefile.sample”.
+Execute “paramset.sh”. >./paramset.sh M 1 1 2
+After then, you get new “param.h”.
+Create Makefile referring to the file “Makefile.sample”.
+Compile “himenoBMTxps.c.
+You get executable load module. >mpirun -np 2 ./a.out
