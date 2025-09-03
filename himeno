@@ -10,3 +10,7 @@ After then, you get new “param.h”.
 Create Makefile referring to the file “Makefile.sample”.
 Compile “himenoBMTxps.c.
 You get executable load module. >mpirun -np 2 ./a.out
+
+$ cd /home/user/himenobench
+$ lha e cc_himenoBMTxp_m.lzh
+$ mv himenobmtxps.c himenoBMTxps.c
