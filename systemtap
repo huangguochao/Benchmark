@@ -1,0 +1,68 @@
+https://www.redhat.com/zh-cn/blog/systemtap-example-script-linetimes.stp
+一些使用上的限制.
+虽然 linetimes.stp 非常强大, 但是依然还是有它无法触及的地方
+
+使用这个 SystemTap 脚本的时候, 因为涉及到函数的跳转, 可能会带来稍许的性能损耗, 但通常来说, 这个损耗会很小, 基本不会对被监测的代码造成太大的干扰. 这个 SystemTap 脚本特别适合监测分析一些函数调用较多的程序.
+对于使用到 inline 的函数, 因为这些 inline 函数是没有 entry 和 return 的, 所以 linetimes.stp 是无法监测 inline 函数的. 而在有些特别的被编译器优化过的函数, linetimes.stp 也是无法精确的监测的.
+有些编译器对编译出来的代码可能会重新调整顺序, 这样的情况下 linetimes.stp 脚本在调用的输出上,可能会有些偏差.
+如果应用里面使用的递归函数调用,  linetimes.stp 脚本的调用关系输出可能会出现 from 和 to 指向同一个的情况.
+
+/usr/share/systemtap/examples/process/linetimes.stp
+#!/usr/bin/stap
+#
+# Copyright (C) 2010-2015 Red Hat, Inc.
+# Written by William Cohen 
+#
+# The linetimes.stp script takes two arguments: where to find the function
+# and the function name. linetimes.stp will instrument each line in the
+# function. It will print out the number of times that the function is
+# called, a table with the average and maximum time each line takes,
+# and control flow information when the script exits.
+#
+# For example all the lines of the do_unlinkat function:
+#
+# stap linetimes.stp kernel do_unlinkat
+
+global calls, times, last_pp, region, cfg
+
+probe $1.function(@2).call { calls <<< 1 }
+probe $1.function(@2).return {
+  t = gettimeofday_us()
+  s = times[tid()]
+  if (s) {
+	e = t - s
+	region[last_pp[tid()]] <<< e
+	cfg[last_pp[tid()], pp()] <<< 1
+  }
+  delete times[tid()]
+  delete last_pp[tid()]
+}
+
+probe $1.statement(@2 "@*:*") {
+  t = gettimeofday_us()
+  s = times[tid()]
+  if (s) {
+	e = t - s
+	region[last_pp[tid()]] <<< e
+	cfg[last_pp[tid()], pp()] <<< 1
+  }
+  times[tid()] = t
+  last_pp[tid()] = pp()
+}
+
+probe end {
+  printf("\n%s %s call count: %d\n", @1, @2, @count(calls));
+  printf("\n%-58s %10s %10s\n", "region", "avg(us)", "max(us)");
+  foreach (p+ in region) {
+	printf("%-58s %10d %10d\n", p, @avg(region[p]), @max(region[p]));
+  }
+
+  printf("\n\ncontrol flow graph information\n")
+  printf("from\n\tto\n=======================\n")
+  foreach ([src+] in region) {
+ 	printf("%-s\n", src)
+ 	foreach ([s,dest+] in cfg[src,*]) { # slice for all dest's
+    	printf("\t%-s %d\n", dest, @count(cfg[src,dest]));
+ 	}
+  }
+}
