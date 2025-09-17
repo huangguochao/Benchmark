@@ -1,3 +1,52 @@
 电力计： https://www.szlswl8.com/h-nd-1790.html
 工具： https://patentimages.storage.googleapis.com/cb/51/28/e4aa38dca64034/CN104598273A.pdf
 调优手段：以spec网站的报告书为准
+
+-----------------------------------------------------------
+S0 (工作)	发动机运转，车正在行驶或怠速。
+S3 (睡眠)	发动机熄火，但车里的收音机和灯还通着电（内存通电），钥匙还在点火开关上。上车一拧钥匙就着车。
+S6 (休眠)	发动机熄火，全车断电。但你用笔把车速、转速、电台频率所有设置都记在了纸上（写入硬盘）。下次上车，先照着纸把所有设置调好，再点火。
+S5 (关机)	发动机熄火，全车断电，直接换一辆新车（全新启动）。
+-----------------------------------------------------------
+C0状态：就像电脑屏幕亮着，你正在使用键盘和鼠标办公。电脑全速运行，功耗高，但随时可以响应你的操作。
+C1/C2状态：就像你暂时离开座位，屏幕自动变暗（但没熄灭）。电脑还在运行，功耗降低，但你一碰鼠标它就能立刻亮起（唤醒延迟极低）。
+C6状态：就像你把电脑休眠（Hibernate） 了。它会把当前所有工作状态保存到硬盘（类比于CPU将状态保存到SRAM），然后几乎关闭所有部件的电源。当你再次开机时，它需要一些时间来从硬盘加载状态并恢复到你之前的工作界面（类比于较高的唤醒延迟），但这比冷启动要快得多，而且极大地节省了能耗。
+------------------------------------------------------------
+P0状态：他使出全力，用最快的速度奔跑搬砖（最高频率和电压），效率最高但也最累（最耗电）。
+P6状态：他慢悠悠地走路搬砖（最低频率和电压），虽然搬得慢，但非常省力（省电），足以应对零星的搬运需求（如后台系统任务）。
+------------------------------------------------------------
+C-states 是 第一层级 的划分：决定CPU核心是 “醒着（C0）” 还是 “睡了（C1-C6）”。
+P-states 是 第二层级 的划分：只有在“醒着（C0）”的状态下，才谈得上讨论“用多大的力气干活（P0-P6）”。
+------------------------------------------------------------
+
+# 查看所有CPU支持的C-states
+cat /sys/devices/system/cpu/cpu0/cpuidle/state*/name
+
+# 查看所有CPU各个C-state的驻留时间和使用次数
+cat /sys/devices/system/cpu/cpu0/cpuidle/state*/time
+cat /sys/devices/system/cpu/cpu0/cpuidle/state*/usage
+
+# 禁用C6状态（例如，对cpu0）
+# 将对应state的 ‘disable’ 文件写入 1
+# 首先找出C6状态对应的是state几 (通过上面的name文件查看)
+# 假设C6对应的是state5
+echo 1 | sudo tee /sys/devices/system/cpu/cpu0/cpuidle/state5/disable
+
+# 要重新启用它，则写入 0
+echo 0 | sudo tee /sys/devices/system/cpu/cpu0/cpuidle/state5/disable
+
+# 设置调速器（governor）为 'powersave'
+# 这会促使CPU尽可能使用低P-state（如P6）
+sudo cpupower frequency-set -g powersave
+
+# 如果要追求性能，设置为 'performance'，这会尽量让CPU保持在P0附近
+sudo cpupower frequency-set -g performance
+
+# 直接设置CPU频率下限（促使它进入低P-state）
+sudo cpupower frequency-set -d 800MHz  # 设置最小频率为800MHz
+
+
+
+
+
+
